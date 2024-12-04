@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,16 +63,6 @@ public class MainActivity extends AppCompatActivity {
         animationLayout.setVisibility(View.VISIBLE);
 
 
-        jsonObjectsFunction();
-
-
-    }
-    // ========================================== On Create Method End Here ===============================================
-
-
-
-    // ================================================ Json Objects Request Start Here ===========================================================================
-    public void jsonObjectsFunction(){
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, json_url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -108,9 +99,12 @@ public class MainActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(jsonObjectRequest);
-    }
 
-    // ================================================ Json Objects Request End Here ===========================================================================
+
+
+    }
+    // ========================================== On Create Method End Here ===============================================
+
 
 
 
@@ -149,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
             Quotes quotes = quotesArrayList.get(position);
             
-            itemId.setText("Item No - "+quotes.getId());
+            itemId.setText("Quote No - "+quotes.getId());
             authorName.setText("-"+quotes.getAuthor());
 
             String getQuoteText = quotes.getQuote();
@@ -234,12 +228,23 @@ public class MainActivity extends AppCompatActivity {
                 listView.setVisibility(View.GONE);
                 animationLayout.setVisibility(View.GONE);
             }else{
-                jsonObjectsFunction();
                 noInternetLayout.setVisibility(View.GONE);
-                listView.setVisibility(View.VISIBLE);
                 animationLayout.setVisibility(View.VISIBLE);
+                listView.setVisibility(View.GONE);
+                afterLoadDataGoneAnimation();
             }
         }
+
+        public void afterLoadDataGoneAnimation(){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    listView.setVisibility(View.VISIBLE);
+                    animationLayout.setVisibility(View.GONE);
+                }
+            },2000);
+        }
+
     }
     // ======================================= Check Netwok Connection End Here =============================================
 
