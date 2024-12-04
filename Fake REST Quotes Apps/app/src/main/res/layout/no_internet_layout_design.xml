@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:id="@+id/topLinear"
+        android:paddingTop="40dp"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/no_internet_shape"
+                android:orientation="vertical"
+                android:paddingTop="30dp"
+                android:paddingBottom="45dp"
+                android:id="@+id/title"
+                >
+
+                <com.mursaat.extendedtextview.AnimatedGradientTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="No Internet"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    app:angle="45"
+                    app:colors="@array/funny_color"
+                    app:maxFPS="30"
+                    app:simultaneousColors="4"
+                    app:speed="1000" />
+            </LinearLayout>
+
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/imageView1"
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="fitXY"
+                app:riv_corner_radius="30dp"
+                app:riv_border_width="4dp"
+                app:riv_border_color="@color/yellow"
+                app:riv_mutate_background="true"
+                app:riv_tile_mode="clamp"
+                app:riv_oval="true" />
+
+            <com.mursaat.extendedtextview.AnimatedGradientTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Please check your internet connection"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:angle="45"
+                app:colors="@array/funny_color"
+                app:maxFPS="30"
+                app:simultaneousColors="4"
+                app:speed="1000"
+                android:layout_below="@id/title"
+                android:layout_marginBottom="50dp"
+                android:layout_marginTop="5dp"
+                />
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <com.lionzxy.trex_library.TRexGameView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/topLinear"
+        />
+
+</RelativeLayout>
