@@ -2,12 +2,17 @@ package com.aspprothes.fakerestquotesapps;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +30,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    private long backPressedDefaultTime = 0;
+    private static final long backPressedInTime = 2000;
     private ListView listView;
     private String json_url = "https://dummyjson.com/quotes";
     private ArrayList<Quotes> quotesArrayList = new ArrayList<>();
+    private TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +117,11 @@ public class MainActivity extends AppCompatActivity {
             TextView itemId = convertView.findViewById(R.id.itemId);
             TextView quotesText = convertView.findViewById(R.id.quotesText);
             TextView authorName = convertView.findViewById(R.id.authorName);
+            ImageView copyItems = convertView.findViewById(R.id.copyItems);
+            ImageView soundItems = convertView.findViewById(R.id.soundItems);
+            ImageView shareItems = convertView.findViewById(R.id.shareItems);
+            ImageView whatsAppShareItems = convertView.findViewById(R.id.whatsAppShareItems);
+
 
             Quotes quotes = quotesArrayList.get(position);
             
@@ -117,9 +131,93 @@ public class MainActivity extends AppCompatActivity {
             String getQuoteText = quotes.getQuote();
             quotesText.setText(""+getQuoteText);
 
+            textToSpeech = new TextToSpeech(MainActivity.this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR){
+                        textToSpeech.setLanguage(new Locale("bn_IN"));
+                    }
+                }
+            });
+
+            soundItems.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    textToSpeech.speak(getQuoteText,TextToSpeech.QUEUE_FLUSH,null);
+                }
+            });
+
+            copyItems.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clipData = ClipData.newPlainText("text",getQuoteText);
+                    clipboardManager.setPrimaryClip(clipData);
+                    Toast.makeText(MainActivity.this, "Copied", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            shareItems.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT,getQuoteText);
+                    intent.setType("text/plain");
+
+                    Intent shareIntent = Intent.createChooser(intent,null);
+                    startActivity(shareIntent);
+
+                    textToSpeech.stop();
+                }
+            });
+
+            whatsAppShareItems.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_SEND);
+                    intent.putExtra(Intent.EXTRA_TEXT,getQuoteText);
+                    intent.setType("text/plain");
+                    intent.setPackage("com.whatsapp");
+
+                    Intent share = Intent.createChooser(intent,null);
+                    try {
+                        startActivity(share);
+                        textToSpeech.stop();
+                    }catch (Exception e){
+                        Toast.makeText(MainActivity.this, "Whatsapp Not Install", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+
+
 
             return convertView;
         }
     }
     // ================================================ Create Custom Array Adapter End Here ==================================
+
+
+
+
+
+    @Override
+    public void onBackPressed() {
+        if (isTaskRoot()){
+            long currentTime = System.currentTimeMillis();
+            if (currentTime-backPressedDefaultTime<backPressedInTime){
+                finish();
+            }else{
+                backPressedDefaultTime = currentTime;
+                Toast.makeText(this, "Again tap to exit", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            super.onBackPressed();
+        }
+    }
+
+
+
 }
